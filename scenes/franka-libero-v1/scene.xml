@@ -1,0 +1,65 @@
+<mujoco model="franka-libero-v1">
+  <!--
+    LIBERO-style tabletop for the pi0.5 (lerobot/pi05_libero_finetuned_v044) eval.
+    A Franka Panda (base at world origin) faces a table with a single block.
+    Two cameras reproduce the LIBERO observation: `agentview` (frontal) -> the
+    policy's observation.images.image, and `wrist` (eye-in-hand, defined inside
+    panda.xml's hand body) -> observation.images.image2.
+
+    Frame caveat (transfer tuning knob): LIBERO's own world frame (table height,
+    base offset) is not reproduced metrically here. observation.state eef pose is
+    reported in THIS world frame (robot base at origin). If zero-shot transfer is
+    weak, align this frame + the camera poses to LIBERO first (see vla/CONTRACT.md).
+  -->
+  <compiler angle="radian" autolimits="true"/>
+  <option gravity="0 0 -9.81" timestep="0.002" integrator="implicitfast"/>
+
+  <visual>
+    <headlight ambient="0.3 0.3 0.3" diffuse="0.4 0.4 0.4" specular="0.1 0.1 0.1"/>
+    <global offwidth="640" offheight="640"/>
+  </visual>
+
+  <asset>
+    <!-- Lit studio backdrop instead of a black void (LIBERO renders are lit rooms). -->
+    <texture name="skybox" type="skybox" builtin="gradient" rgb1="0.57 0.60 0.65" rgb2="0.32 0.34 0.38"
+             width="512" height="512"/>
+    <texture name="grid" type="2d" builtin="checker" rgb1="0.46 0.47 0.5" rgb2="0.38 0.39 0.42" width="128" height="128"/>
+    <material name="floor_mat" texture="grid" texrepeat="6 6" reflectance="0.05"/>
+    <!-- Light wood tabletop, closer to LIBERO's table than the previous dark brown. -->
+    <material name="wood" rgba="0.74 0.62 0.46 1" specular="0.1" shininess="0.1"/>
+    <material name="block_mat" rgba="0.85 0.15 0.15 1" specular="0.3" shininess="0.3"/>
+  </asset>
+
+  <worldbody>
+    <light name="top" pos="0.55 0 2.2" dir="0 0 -1" diffuse="0.45 0.45 0.45" specular="0.1 0.1 0.1"/>
+    <light name="key" pos="1.0 1.0 1.8" dir="-0.4 -0.5 -1" diffuse="0.3 0.3 0.3"/>
+
+    <geom name="floor" type="plane" size="3 3 0.05" material="floor_mat"/>
+
+    <!-- LIBERO/robosuite agentview: 0.5 m in front of the table center, 0.55 m
+         above the top, looking back+down at ~45deg. quat from robosuite
+         table_arena.xml; placed relative to our table (center x=0.55, top z=0.40). -->
+    <camera name="agentview" pos="1.05 0.0 0.95" quat="0.653 0.271 0.271 0.653" fovy="45"/>
+
+    <!-- ============ TABLE (fixed) ============ -->
+    <body name="table" pos="0.55 0 0">
+      <geom name="tabletop" type="box" size="0.3 0.4 0.02" pos="0 0 0.38" material="wood"/>
+      <geom name="leg_fl" type="cylinder" size="0.025 0.19" pos="-0.27 -0.37 0.19" material="wood"/>
+      <geom name="leg_fr" type="cylinder" size="0.025 0.19" pos="0.27 -0.37 0.19" material="wood"/>
+      <geom name="leg_bl" type="cylinder" size="0.025 0.19" pos="-0.27 0.37 0.19" material="wood"/>
+      <geom name="leg_br" type="cylinder" size="0.025 0.19" pos="0.27 0.37 0.19" material="wood"/>
+    </body>
+
+    <!-- ============ MANIPULABLE OBJECT (free) ============ -->
+    <body name="block" pos="0.52 0.14 0.43">
+      <freejoint name="block_joint"/>
+      <geom name="block_geom" type="box" size="0.025 0.025 0.025" material="block_mat"
+            mass="0.05" friction="1.0 0.01 0.001"/>
+    </body>
+  </worldbody>
+
+  <!-- Franka Panda (base at origin); defines the `wrist` camera + `eef` site.
+       Top-level include: panda.xml is a full model (default/asset/actuator/...)
+       whose sections merge with this one; its worldbody bodies join ours. -->
+  <include file="franka_emika_panda/panda.xml"/>
+</mujoco>

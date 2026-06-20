@@ -1,0 +1,48 @@
+{
+  "scene_id": "franka-libero-v1",
+  "description": "Franka Panda at a tabletop with a single red block. LIBERO-style observation/action contract for evaluating pi0.5 (lerobot/pi05_libero_finetuned_v044). agentview + wrist cameras; 7-DoF delta end-effector control via OSC/IK.",
+  "source": "menagerie-franka + hand-authored table",
+  "format": "mjcf",
+  "engine": "newton",
+  "embodiment": "franka_panda",
+  "vla_contract": {
+    "policy": "lerobot/pi05_libero_finetuned_v044",
+    "images": {
+      "image": {"camera": "agentview", "size": [256, 256], "note": "frontal third-person -> observation.images.image"},
+      "image2": {"camera": "wrist", "size": [256, 256], "note": "eye-in-hand -> observation.images.image2"}
+    },
+    "state_dim": 8,
+    "state_layout": "[eef_pos(3), eef_axis_angle(3), finger_qpos1, finger_qpos2]",
+    "action_dim": 7,
+    "action_layout": "[d_eef_pos(3), d_eef_axis_angle(3), gripper(1)] in normalized OSC space, gripper>0 closes",
+    "control_hz": 20,
+    "sim_dt": 0.002,
+    "decimation": 25,
+    "chunk_size": 50
+  },
+  "robot": {
+    "arm_joints": ["joint1", "joint2", "joint3", "joint4", "joint5", "joint6", "joint7"],
+    "finger_joints": ["finger_joint1", "finger_joint2"],
+    "arm_actuators": ["actuator1", "actuator2", "actuator3", "actuator4", "actuator5", "actuator6", "actuator7"],
+    "gripper_actuator": "actuator8",
+    "eef_site": "eef",
+    "hand_body": "hand"
+  },
+  "objects": {
+    "block": {
+      "type": "free",
+      "description": "Red 5cm cube on the tabletop, offset from the home eef so it is unoccluded in agentview",
+      "initial_position": [0.52, 0.14, 0.43]
+    }
+  },
+  "cameras": ["agentview", "wrist"],
+  "tasks": {
+    "pick_block": {
+      "scenario": "vla-pick",
+      "target_object": "block",
+      "instruction": "pick up the red block",
+      "lift_height": 0.55,
+      "description": "Lift the block above the table"
+    }
+  }
+}

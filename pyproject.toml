@@ -1,0 +1,53 @@
+[project]
+name = "worldsim"
+version = "0.1.0"
+description = "Worldsim robotics tasks on HUD: Newton sim served as an mcp capability"
+requires-python = ">=3.12,<3.13"
+
+# Eval-machine dependencies. The Newton physics engine (`newton` + `gizmo`) is
+# NOT on PyPI: it ships as a pre-built wheel in wheels/ (see [tool.uv.sources]).
+dependencies = [
+    "hud-python>=0.6.0",  # HUD SDK: Environment, capabilities, hud eval
+    "mujoco>=3.2.0",       # rendering, model name lookups, IK
+    "numpy>=1.26.0",
+    "Pillow>=10.0.0",      # base64 PNG encode/decode for render()
+    "warp-lang>=1.13.0",   # Newton's compute backend
+    "newton",              # Newton engine (bundled wheel, see below)
+    "mujoco-warp>=3.8.0.1",  # Newton's MuJoCo solver backend
+    "scipy>=1.11.0",       # mesh processing during scene import
+    "trimesh>=4.6.8",      # mesh loading during scene import
+]
+
+[project.optional-dependencies]
+# VLA / robot path (environment/vla_env.py, run_vla.py). The `robot` capability ships the
+# openpi-client msgpack-numpy wire codec; both serving the env and connecting an
+# agent need it. Required on the env side too (the bridge imports the codec).
+robot = [
+    "hud-python[robot]",   # openpi-client + numpy: the robot (openpi/0) protocol
+]
+# pi0.5 agent inference (GPU machine). lerobot pulls in torch + the policy classes.
+vla = [
+    "lerobot",             # PI05Policy + pre/post processors (agents/vla_agent.py)
+]
+# Remote policy server (serve/). Run on the GPU box to serve pi0.5 over openpi/0;
+# the eval machine then uses `run_vla.py --remote HOST:PORT` and needs none of this.
+# Needs the vla extra too for the real policy (the --noop server needs only this).
+serve = [
+    "hud-python[robot]",   # openpi-client: the openpi/0 msgpack-numpy wire codec
+    "websockets>=12.0",    # the policy server's websocket transport
+    "modal>=0.64",         # optional: `modal run serve/pi05_modal.py` (managed GPU)
+]
+# Live 3D viewer (WORLDSIM_VIEWER=1; the sim process renders it - see sim/host.py).
+# Needs a display; the Gizmo desktop shell uses imgui-bundle, the bare Newton
+# ViewerGL fallback uses pyglet.
+viewer = [
+    "pyglet>=2.0",
+    "imgui-bundle>=1.90",
+]
+
+[tool.uv.sources]
+newton = { path = "wheels/newton-1.2.0.dev0+gbecfa36c-py3-none-any.whl" }
+
+[tool.uv]
+# Run in place (hud eval environment/tasks.py / python examples/example_agent.py), not installed.
+package = false
