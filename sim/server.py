@@ -55,6 +55,8 @@ import newton
 import newton.solvers
 from gizmo.runtime import _build_solver, import_model
 
+import sim.newton_compat  # noqa: F401  patches Newton's color-31 contype overflow (dense scenes)
+
 wp.init()
 wp.config.log_level = wp.LOG_WARNING
 sys.stdout = _orig_stdout

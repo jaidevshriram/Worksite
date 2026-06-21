@@ -1,12 +1,45 @@
 <h1 align="center">
-  <img src="antim.png" alt="Antim Labs" height="30"> &nbsp;&nbsp;×&nbsp;&nbsp; <img src="hud_logo.svg" alt="HUD" height="28"> &nbsp;&nbsp;|&nbsp;&nbsp; World Sim RL Environment Template
+  <img src="antim.png" alt="Antim Labs" height="30"> &nbsp;&nbsp;×&nbsp;&nbsp; <img src="hud_logo.svg" alt="HUD" height="28"> &nbsp;&nbsp;|&nbsp;&nbsp; Worksite — Multi-Agent Construction RL Environment
 </h1>
 
-Worldsim robotics tasks on the **HUD SDK**. A Newton physics scene is a live
-environment with a tool API; you drive it with an LLM agent or a VLA policy and it
-scores the rollout.
+<p align="center"><b>Worksite</b> — <i>Where AI learns to run the floor.</i><br/>
+A simulation-to-training platform that benchmarks how well AI coordinates fleets of real-world robots.<br/>
+Powered by <b>HUD</b> · <b>Fireworks</b> · <b>Exa</b> · <b>World Labs</b> · <b>MuJoCo</b></p>
 
-> **reset** the scene  →  **drive** the gripper through the tool API (or a VLA policy)  →  **grade** from sim state
+Worksite is a HUD-native RL environment where a fleet of heterogeneous robots
+cooperates on a construction site. A physics scene is a live environment with a
+tool API; you drive it with an LLM agent (or a VLA policy) and it scores the rollout.
+
+> **reset** the scene  →  **drive** the fleet through the tool API (or a VLA policy)  →  **grade** from sim state
+
+There is also a self-contained **website** at the repo root — open
+[`index.html`](index.html) in any browser (an engineering-blueprint landing page with the
+demo videos, renders, the pipeline, and the measured results). It needs no build step and
+uses relative `media/...` paths, so it also works on GitHub Pages.
+
+## The Worksite construction environment
+
+`environment/construction_env.py` runs the `worldsim-construction` taskset on the
+`construction-v1` scene: a fleet of heterogeneous embodiments moves bricks along a
+supply line to a build pad while patrolling the site, and HUD grades the **real** task
+(blocks placed, patrol coverage, fleet utilization, collision safety) into a reward with
+an explainable breakdown. Four tasks ship — `block_line`, `parallel_supply`,
+`heavy_relay`, `full_coordination` — each with its own partial-credit reward weights.
+
+```bash
+hud eval environment/construction_env.py            # run the construction taskset
+python examples/construction_agents.py              # scripted fleet reference
+python scripts/construction_rl_train.py             # Fireworks GRPO calibration / training loop
+```
+
+> ### ⚠️ Large scene assets are gitignored
+> The heavy `construction-v1` mesh and textures — most notably
+> `scenes/construction-v1/scene.xml` (~260 MB) and the scene's `*.obj` / `*.stl` /
+> texture `*.png` files — are **excluded from this repo** via `.gitignore` to keep it
+> under GitHub's 100 MB file limit and lean (no Git LFS). Source code, tasks, the
+> website, and the small `media/` clips are all included. **Regenerate or download the
+> scene meshes separately** and drop them under `scenes/construction-v1/` (matching the
+> `scene.xml` + `metadata.json` layout) before running the construction env locally.
 
 - **LLM tool tasks** - four manipulation tasks (`open-drawer`, `pick-object`,
   `move-object`, `force-grasp`) on `tabletop-v1`, served as an `mcp` capability.
@@ -37,6 +70,36 @@ Each grades from sim state with partial credit, so the reward breakdown always e
 score. Plus a VLA task, `vla-pick` on `franka-libero-v1` ("pick up the red block"), over the
 `robot` (openpi/0) capability.
 
+### Planning task (symbolic skills, no physics)
+
+`move-side-table` on `living-room-v1` grades an LLM's **plan**, not low-level control. The
+agent drives a high-level skill API served as an `mcp` capability - `walk_to(x,y)`,
+`pick(object)`, `place(x,y)`, `get_world_state()`, `render()` - with explicit
+**preconditions + effects** over a physics-free world state (`sim/skill_world.py`). Reward =
+whether the side table is landed in the target corner (with distance-shaped partial credit).
+This is the right layer for benchmarking planning / multi-agent orchestration: reliability
+comes from the LLM composing reliable skills, not from contact dynamics.
+
+### Cooperative multi-agent task
+
+`tidy-room` on `living-room-v1` (`environment/coop_env.py`) puts **two agents** (`A`, `B`) in
+the room with skills parameterized by agent id (`walk_to`/`grab`/`carry_to`/`release`/`say`).
+Three objects must be placed in three corners; one (the TV console) is **heavy and needs both
+agents to grab it before it can be carried**. So coordination is *necessary* - a single-agent
+plan caps at 0.667 (2/3), while a plan that parallelizes the light items and co-carries the
+heavy one scores 1.0. Reward is the mean per-object score, so the breakdown shows which
+placements (and the cooperation) succeeded.
+
+### Multi-agent task (team coordination)
+
+`team-stage-corner` on `living-room-v1` makes one LLM the controller of a three-agent team
+(alpha, bravo, carol) over agent-scoped skills (`sim/multi_skill_world.py`). It can only be
+solved by coordinating: the side table is **heavy** (a single `pick` is refused - two agents
+must `joint_lift` it together) and the corner is **blocked** by a cushion that must be cleared
+first. So the winning plan needs decomposition, role assignment, ordering, and a synchronized
+joint action. Reward = table landed in the corner (0.5) + corner cleared (0.2) + distance
+shaping (0.3).
+
 ## Install
 
 Python 3.12. `uv` installs everything from the lockfile, including the bundled Newton
@@ -56,6 +119,21 @@ python scripts/check_setup.py
 
 # LLM tasks against the platform
 hud eval environment/tasks.py claude --all --group 3
+
+# planning task (symbolic skills, no GPU/physics boot) - trace shows the skill plan
+hud eval environment/living_room_env.py claude
+python examples/living_room_agent.py        # scripted planner, deterministic (1.0)
+python examples/living_room_agent.py --llm  # an LLM emits the skill plan
+
+# cooperative multi-agent task (two agents; the heavy item needs both)
+hud eval environment/coop_env.py claude --max-steps 60
+python examples/coop_agents.py              # scripted multi-agent planner (1.0)
+python examples/coop_agents.py --llm        # one LLM orchestrates agents A and B
+
+# multi-agent team task (needs more steps: clear corner + two-agent joint lift)
+hud eval environment/team_env.py claude --max-steps 40
+python examples/team_agent.py               # scripted team plan, deterministic (1.0)
+python examples/team_agent.py --llm         # an LLM coordinates the three agents
 
 # the example agent on move-object
 python examples/example_agent.py            # scripted, deterministic (~1.0)
@@ -95,8 +173,10 @@ Bring your own policy: copy the `CustomModel`/`CustomAgent` scaffold in
 ## Layout
 
 ```
-worldsim-template/
-├── environment/   the envs + tasks: env.py (LLM), vla_env.py (VLA), tasks.py
+Worksite/
+├── index.html     the static blueprint website (open directly; site.css / site.js)
+├── media/         demo videos + render stills used by the website
+├── environment/   the envs + tasks: construction_env.py, env.py (LLM), vla_env.py (VLA), tasks.py
 ├── examples/      example_agent.py - an agent on the tool API (scripted + LLM)
 ├── agents/        vla_agent.py - VLA policies: pi0.5 baseline + bring-your-own
 ├── serve/         policy servers for a GPU box (policy_server.py, pi05_modal.py)

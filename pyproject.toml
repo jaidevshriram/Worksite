@@ -16,9 +16,34 @@ dependencies = [
     "mujoco-warp>=3.8.0.1",  # Newton's MuJoCo solver backend
     "scipy>=1.11.0",       # mesh processing during scene import
     "trimesh>=4.6.8",      # mesh loading during scene import
+    "openai>=2.43.0",
+    "python-dotenv>=1.2.2",
+    "exa-py>=2.14.0",
+    "fastapi>=0.138.0",
+    "uvicorn>=0.49.0",
+    "fireworks-ai>=0.19.20",
+    "transformers>=5.12.1",
+    "torch>=2.7.1",
+    "tinker>=0.22.3",
 ]
 
 [project.optional-dependencies]
+# Fireworks RL Training (scripts/construction_rl_train.py).
+# Phase 1 (inference calibration only): openai + python-dotenv
+# Phase 2+3 (managed sampler + full GRPO training): also fireworks-ai, tinker, torch, transformers
+fireworks = [
+    "openai>=1.0.0",
+    "python-dotenv>=1.0.0",
+]
+# Full training stack (preview access from Fireworks required):
+fireworks-train = [
+    "openai>=1.0.0",
+    "python-dotenv>=1.0.0",
+    "fireworks-ai>=0.15.0",
+    "transformers>=4.40.0",
+    "torch>=2.2.0",
+    "matplotlib>=3.8.0",
+]
 # VLA / robot path (environment/vla_env.py, run_vla.py). The `robot` capability ships the
 # openpi-client msgpack-numpy wire codec; both serving the env and connecting an
 # agent need it. Required on the env side too (the bridge imports the codec).

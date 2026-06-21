@@ -11,6 +11,34 @@ venv/
 datasets/
 results/
 telemetry-dump/
+.DS_Store
+
+# scratch / logs
+.tmp_scene/
+MUJOCO_LOG.TXT
+*.log
+
+# Videos/gifs are ignored by default, BUT the small media/ clips power the
+# website and must stay in the repo.
 *.mp4
 *.gif
-.DS_Store
+!media/*.mp4
+!media/*.gif
+
+# ── Large scene meshes & textures (NOT in the repo) ───────────────────────────
+# These are large generated/bundled assets. They are gitignored to keep the repo
+# pushable (GitHub rejects files > 100MB) and lean. Regenerate or download them
+# separately — see the README "Large scene assets" note. The website's media/
+# PNGs and MP4s are kept above and are unaffected.
+scenes/**/scene.xml
+scenes/**/*.obj
+scenes/**/*.stl
+scenes/**/*.STL
+scenes/**/*.usd
+scenes/**/*.usdz
+scenes/**/*.png
+scenes/**/*.jpg
+scenes/**/*.jpeg
+scenes/**/*.exr
+scenes/**/*.hdr
+scenes/**/*.ktx2

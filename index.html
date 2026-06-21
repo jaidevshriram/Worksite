@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Worksite — Where AI learns to run the floor</title>
+  <meta name="description" content="Worksite: a simulation-to-training platform that benchmarks how well AI coordinates fleets of real-world robots." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="site.css" />
+</head>
+<body>
+  <!-- ===================== NAV ===================== -->
+  <nav>
+    <span class="brand">Worksite</span>
+    <a class="navlink" href="#demo">Demo</a>
+    <a class="navlink" href="#gallery">Gallery</a>
+    <a class="navlink" href="#pipeline">Pipeline</a>
+    <a class="navlink" href="#results">Results</a>
+    <a class="navlink" href="#tasks">Tasks</a>
+    <a class="navlink" href="https://github.com/jaidevshriram/Worksite">GitHub ↗</a>
+  </nav>
+
+  <main>
+    <!-- ===================== HERO ===================== -->
+    <header class="hero" id="top">
+      <div class="eyebrow">RL Environment · Multi-Agent Robotics</div>
+      <h1>Worksite<span class="underdim"></span></h1>
+      <p class="tagline">Where AI learns to run the floor.</p>
+      <p class="oneliner">A simulation-to-training platform that benchmarks how well AI coordinates fleets of real-world robots.</p>
+      <div class="powered">
+        <span class="label">Powered by</span>
+        <span class="chip">HUD</span>
+        <span class="chip">Fireworks</span>
+        <span class="chip">Exa</span>
+        <span class="chip">World Labs</span>
+        <span class="chip">MuJoCo</span>
+      </div>
+    </header>
+
+    <!-- ===================== DEMO VIDEO ===================== -->
+    <section id="demo" class="reveal">
+      <p class="kicker">Sheet 01 — Demonstration</p>
+      <h2 class="section-title">The floor, in motion</h2>
+      <p class="lead">A heterogeneous fleet — excavator, robodogs, wheeled manipulators, humanoids — driven through a scripted construction task and a fleet walkabout inside the MuJoCo scene.</p>
+      <div class="dimline"></div>
+      <div class="video-grid">
+        <figure class="media-card" data-tag="VID-01 · Task Run">
+          <video controls loop muted playsinline poster="media/construction_task.png" preload="metadata">
+            <source src="media/construction_task.mp4" type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
+          <figcaption>
+            <span>Scripted task run — fleet carries bricks along the supply line to the build pad.</span>
+            <span class="runtime">~30s</span>
+          </figcaption>
+        </figure>
+        <figure class="media-card" data-tag="VID-02 · Walkabout">
+          <video controls loop muted playsinline poster="media/construction_walkabout.png" preload="metadata">
+            <source src="media/construction_walkabout.mp4" type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
+          <figcaption>
+            <span>Fleet walkabout — a sweep across the active construction site and its embodiments.</span>
+            <span class="runtime">~8s</span>
+          </figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <!-- ===================== GALLERY ===================== -->
+    <section id="gallery" class="reveal">
+      <p class="kicker">Sheet 02 — Renders</p>
+      <h2 class="section-title">Site renders</h2>
+      <p class="lead">Frames from the <code>construction-v1</code> scene and the broader Worksite scene library.</p>
+      <div class="dimline"></div>
+      <div class="gallery">
+        <figure>
+          <img src="media/construction_task.png" alt="Construction task scene, top-down" loading="lazy" />
+          <figcaption><b>construction-v1</b> — task layout: build pad, supply line, fleet</figcaption>
+        </figure>
+        <figure>
+          <img src="media/construction_v1_render.png" alt="Construction site render with humanoids" loading="lazy" />
+          <figcaption><b>construction-v1</b> — fleet staged across the yard</figcaption>
+        </figure>
+        <figure>
+          <img src="media/construction_walkabout.png" alt="Construction walkabout frame" loading="lazy" />
+          <figcaption><b>construction-v1</b> — walkabout sweep</figcaption>
+        </figure>
+        <figure>
+          <img src="media/construction_v1_all6.png" alt="All six embodiments" loading="lazy" />
+          <figcaption><b>construction-v1</b> — the full heterogeneous fleet</figcaption>
+        </figure>
+        <figure>
+          <img src="media/construction_v1_sideview.png" alt="Construction site side view" loading="lazy" />
+          <figcaption><b>construction-v1</b> — site elevation / side view</figcaption>
+        </figure>
+        <figure>
+          <img src="media/coop_tidy_room.png" alt="Cooperative tidy-room task" loading="lazy" />
+          <figcaption><b>living-room-v1</b> — cooperative multi-agent task</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <!-- ===================== PIPELINE ===================== -->
+    <section id="pipeline" class="reveal">
+      <p class="kicker">Sheet 03 — Process</p>
+      <h2 class="section-title">The pipeline</h2>
+      <p class="lead">Five stages take a static scene all the way to a training-ready agent.</p>
+      <div class="dimline"></div>
+      <div class="pipeline">
+        <div class="stage">
+          <h3>Scene</h3>
+          <p>A MuJoCo world (<code>scene.xml</code> + <code>metadata.json</code>) becomes a live, resettable environment.</p>
+          <span class="arrow">→</span>
+        </div>
+        <div class="stage">
+          <h3>Specs</h3>
+          <p>Tasks, tools, and reward functions define the real job the fleet must accomplish.</p>
+          <span class="arrow">→</span>
+        </div>
+        <div class="stage">
+          <h3>Fleet</h3>
+          <p>Heterogeneous embodiments are driven by an agent through the HUD tool API.</p>
+          <span class="arrow">→</span>
+        </div>
+        <div class="stage">
+          <h3>Eval</h3>
+          <p>HUD grades each rollout from sim state into a reward with an explainable breakdown.</p>
+          <span class="arrow">→</span>
+        </div>
+        <div class="stage">
+          <h3>Train</h3>
+          <p>Reward signal feeds GRPO hill-climbing via Fireworks to improve coordination.</p>
+          <span class="arrow">→</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== RESULTS ===================== -->
+    <section id="results" class="reveal">
+      <p class="kicker">Sheet 04 — Measurements</p>
+      <h2 class="section-title">Results</h2>
+      <p class="lead">All numbers below are real, measured runs. Nothing is fabricated or projected.</p>
+      <div class="dimline"></div>
+
+      <div class="results-block">
+        <h3>Claude — measured <span class="badge ok">Real</span></h3>
+        <p class="note">claude-sonnet-4-6, routed via the HUD Gateway.</p>
+        <table class="data">
+          <thead>
+            <tr><th>Task</th><th>Reward</th><th>Success</th><th>Runs</th><th>Step budget</th><th>Notes</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>block_line</td>
+              <td class="num">0.875</td>
+              <td class="num">100%</td>
+              <td class="num">3</td>
+              <td class="num">50</td>
+              <td>Full task success</td>
+            </tr>
+            <tr>
+              <td>full_coordination</td>
+              <td class="num">0.650 ± 0.024</td>
+              <td>partial</td>
+              <td class="num">3</td>
+              <td class="num">60</td>
+              <td>Partial completion</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="results-block">
+        <h3>Scripted reference baseline <span class="badge ok">Real</span></h3>
+        <p class="note">Deterministic scripted controller — the ground-truth upper reference.</p>
+        <table class="data">
+          <thead>
+            <tr><th>Task</th><th>Blocks</th><th>Collisions</th><th>Fleet util / patrol</th><th>Steps</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>block_line</td>
+              <td class="num">4 / 4</td>
+              <td class="num">0</td>
+              <td class="num">fleet_utilization 0.17</td>
+              <td class="num">—</td>
+            </tr>
+            <tr>
+              <td>full_coordination</td>
+              <td class="num">4 / 4 + full patrol</td>
+              <td class="num">0</td>
+              <td class="num">full patrol</td>
+              <td class="num">28</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="results-block">
+        <h3>Fireworks RL calibration <span class="badge ok">Real</span></h3>
+        <p class="note">GLM-5.2 base. Within-group reward std &gt; 0.10 ⇒ usable GRPO signal.</p>
+        <table class="data">
+          <thead>
+            <tr><th>Config</th><th>reward_mean</th><th>within_group_reward_std</th><th>GRPO signal</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>n_blocks = 2</td>
+              <td class="num">0.6875</td>
+              <td class="num">0.2693</td>
+              <td><span class="badge ok">usable</span></td>
+            </tr>
+            <tr>
+              <td>n_blocks = 3</td>
+              <td class="num">0.125</td>
+              <td class="num">0.25</td>
+              <td><span class="badge ok">usable</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="results-block">
+        <h3>Full GRPO training <span class="badge wip">WIP</span></h3>
+        <div class="wip-card">
+          <b>Training loop implemented &amp; verified to provisioning.</b> Full run pending account training-tier upgrade. No training curve is shown until a complete run is available.
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== TASKS ===================== -->
+    <section id="tasks" class="reveal">
+      <p class="kicker">Sheet 05 — Taskset</p>
+      <h2 class="section-title">Tasks &amp; scoring</h2>
+      <p class="lead">Four tasks in <code>worldsim-construction</code>, each with a partial-credit reward composed from sim state.</p>
+      <div class="dimline"></div>
+      <div class="task-grid">
+        <div class="task-card">
+          <p class="slug">block_line</p>
+          <p class="pct">supply-line build</p>
+          <p class="formula">
+            <span class="w">70%</span> blocks<br />
+            <span class="w">15%</span> patrol<br />
+            <span class="w">15%</span> fleet utilization
+          </p>
+        </div>
+        <div class="task-card">
+          <p class="slug">parallel_supply</p>
+          <p class="pct">parallel staging</p>
+          <p class="formula">
+            <span class="w">60%</span> blocks<br />
+            <span class="w">25%</span> peak simultaneous<br />
+            <span class="w">15%</span> fleet utilization
+          </p>
+        </div>
+        <div class="task-card">
+          <p class="slug">heavy_relay</p>
+          <p class="pct">heavy hand-off</p>
+          <p class="formula">
+            <span class="w">60%</span> block<br />
+            <span class="w">20%</span> patrol<br />
+            <span class="w">20%</span> fleet utilization
+          </p>
+        </div>
+        <div class="task-card">
+          <p class="slug">full_coordination</p>
+          <p class="pct">full fleet ops</p>
+          <p class="formula">
+            <span class="w">50%</span> blocks<br />
+            <span class="w">30%</span> patrol<br />
+            <span class="w">20%</span> fleet utilization<br />
+            <span class="w">−</span> collision penalty
+          </p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ===================== FOOTER ===================== -->
+  <footer class="reveal">
+    <p class="kicker">Build it yourself</p>
+    <div class="cta-row">
+      <a class="btn" href="https://github.com/jaidevshriram/Worksite">View the repository ↗</a>
+      <code class="cmd">hud eval environment/construction_env.py</code>
+    </div>
+
+    <div class="title-block">
+      <div class="tb-wide">
+        <span class="tb-label">Project</span>
+        <span class="tb-val">Worksite — Multi-Agent Construction RL Environment</span>
+      </div>
+      <div>
+        <span class="tb-label">Stack</span>
+        <span class="tb-val">HUD · MuJoCo</span>
+      </div>
+      <div>
+        <span class="tb-label">Training</span>
+        <span class="tb-val">Fireworks GRPO</span>
+      </div>
+      <div>
+        <span class="tb-label">Scene</span>
+        <span class="tb-val">construction-v1</span>
+      </div>
+      <div>
+        <span class="tb-label">Tasks</span>
+        <span class="tb-val">4</span>
+      </div>
+      <div>
+        <span class="tb-label">Rev</span>
+        <span class="tb-val">v1</span>
+      </div>
+      <div>
+        <span class="tb-label">Sheet</span>
+        <span class="tb-val">01 / 05</span>
+      </div>
+    </div>
+
+    <p class="foot-meta">Worksite · Where AI learns to run the floor. · Powered by HUD · Fireworks · Exa · World Labs · MuJoCo</p>
+  </footer>
+
+  <script src="site.js"></script>
+</body>
+</html>

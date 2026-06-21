@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Worldsim Template — Repo &amp; Scope Guide (SiteForge Hackathon)</title>
+<style>
+  :root {
+    --bg: #0f1117;
+    --panel: #171a22;
+    --panel-2: #1d212b;
+    --ink: #e6e8ee;
+    --muted: #9aa3b2;
+    --line: #2a2f3a;
+    --accent: #6ea8fe;
+    --green: #4ade80;
+    --amber: #fbbf24;
+    --red: #f87171;
+    --code-bg: #0b0d12;
+    --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font-family: var(--sans); line-height: 1.6; font-size: 15px;
+  }
+  .wrap { max-width: 980px; margin: 0 auto; padding: 48px 24px 96px; }
+  header h1 { font-size: 30px; margin: 0 0 6px; letter-spacing: -0.02em; }
+  header .sub { color: var(--muted); font-size: 16px; margin-bottom: 8px; }
+  header .tag {
+    display: inline-block; font-family: var(--mono); font-size: 12px;
+    color: var(--accent); border: 1px solid var(--line); border-radius: 6px;
+    padding: 2px 8px; margin-top: 8px;
+  }
+  h2 {
+    font-size: 21px; margin: 44px 0 14px; padding-bottom: 8px;
+    border-bottom: 1px solid var(--line); letter-spacing: -0.01em;
+  }
+  h3 { font-size: 16px; margin: 26px 0 8px; color: var(--ink); }
+  p { color: var(--ink); }
+  code {
+    font-family: var(--mono); font-size: 13px; background: var(--code-bg);
+    border: 1px solid var(--line); border-radius: 5px; padding: 1px 6px; color: #d7e0f0;
+  }
+  pre {
+    background: var(--code-bg); border: 1px solid var(--line); border-radius: 10px;
+    padding: 16px; overflow-x: auto; font-family: var(--mono); font-size: 13px;
+    line-height: 1.5; color: #d7e0f0; margin: 14px 0;
+  }
+  pre code { background: none; border: none; padding: 0; }
+  .lead {
+    background: var(--panel); border: 1px solid var(--line); border-radius: 12px;
+    padding: 18px 20px; margin: 18px 0 8px; font-size: 15px;
+  }
+  .flow {
+    font-family: var(--mono); font-size: 13.5px; color: var(--accent);
+    background: var(--panel-2); border: 1px solid var(--line); border-radius: 10px;
+    padding: 14px 18px; margin: 14px 0; text-align: center;
+  }
+  table { width: 100%; border-collapse: collapse; margin: 14px 0; font-size: 13.5px; }
+  th, td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { color: var(--muted); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: 0.04em; }
+  td code { font-size: 12.5px; }
+  .cards { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 16px 0; }
+  .card {
+    background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 16px 18px;
+  }
+  .card h3 { margin-top: 0; }
+  .card .path { font-family: var(--mono); font-size: 12px; color: var(--accent); }
+  .callout {
+    border-radius: 12px; padding: 16px 18px; margin: 18px 0;
+    border: 1px solid var(--line); background: var(--panel);
+  }
+  .callout.warn { border-color: #5a4410; background: #2a2008; }
+  .callout.warn .label { color: var(--amber); }
+  .callout.good { border-color: #1d4a2c; background: #0d2316; }
+  .callout.good .label { color: var(--green); }
+  .callout.stop { border-color: #5a1d1d; background: #2a0d0d; }
+  .callout.stop .label { color: var(--red); }
+  .callout .label { font-weight: 700; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; display: block; margin-bottom: 6px; }
+  ol, ul { padding-left: 22px; }
+  ol li, ul li { margin: 6px 0; }
+  .muted { color: var(--muted); }
+  .pill { font-family: var(--mono); font-size: 11px; padding: 1px 7px; border-radius: 20px; border: 1px solid var(--line); color: var(--muted); }
+  .step-num { color: var(--accent); font-family: var(--mono); }
+  hr { border: none; border-top: 1px solid var(--line); margin: 36px 0; }
+  a { color: var(--accent); }
+  .small { font-size: 13px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Worldsim Template — Repo &amp; Scope Guide</h1>
+    <div class="sub">What this repo actually does, how scenes &amp; robots work, and what's in-scope for SiteForge.</div>
+    <span class="tag">HUD × Antim Labs · Worldsim Robotics track</span>
+  </header>
+
+  <div class="lead">
+    <strong>One-sentence mental model:</strong> a scene is a physics world (a MuJoCo/USD/URDF file),
+    HUD wraps it as an <em>environment</em> that exposes <em>tools</em> over MCP, an LLM agent drives
+    those tools, and a task function reads the final sim state to compute a <em>reward</em>.
+  </div>
+
+  <div class="flow">reset(scene) &nbsp;→&nbsp; drive the robot via tools &nbsp;→&nbsp; grade from sim state &nbsp;→&nbsp; reward + subscores</div>
+
+  <h2>1 · How the repo flows</h2>
+  <p>Five moving parts. The first two are what you edit; the rest is plumbing you mostly leave alone.</p>
+
+  <div class="cards">
+    <div class="card">
+      <h3>① The environment + tasks</h3>
+      <div class="path">environment/env.py · environment/tasks.py</div>
+      <p class="small">Defines the <code>Environment</code>, spawns the sim, and declares tasks with
+      <code>@env.template</code>. Each task: <code>reset</code> the scene → <code>yield</code> a prompt →
+      read sim state → <code>yield EvaluationResult(reward, subscores)</code>. <strong>This is where Phase 1 lives.</strong></p>
+    </div>
+    <div class="card">
+      <h3>② The scenes</h3>
+      <div class="path">scenes/&lt;scene_id&gt;/</div>
+      <p class="small">Each folder is a world: a <code>scene.xml</code> (MJCF) + <code>metadata.json</code>.
+      <strong>Adding a scene = adding a folder here.</strong> We'll add <code>scenes/construction-v1/</code>.</p>
+    </div>
+    <div class="card">
+      <h3>③ The sim host</h3>
+      <div class="path">sim/host.py · sim/server.py</div>
+      <p class="small">Runs Newton physics in its own process and serves the tool API
+      (<code>reset</code>, <code>step</code>, <code>render</code>, <code>get_object_state</code>,
+      <code>move_gripper</code>, …) over FastMCP. The viewer can own the main thread (<code>WORLDSIM_VIEWER=1</code>).</p>
+    </div>
+    <div class="card">
+      <h3>④ The robot control</h3>
+      <div class="path">sim/control.py · sim/franka_bridge.py</div>
+      <p class="small">Franka-specific IK / end-effector control for the VLA path. Single-arm and
+      hardcoded to Franka joint names. <strong>Not used for our multi-robot construction.</strong></p>
+    </div>
+    <div class="card">
+      <h3>⑤ Agents / runners</h3>
+      <div class="path">examples/example_agent.py · run_vla.py · agents/</div>
+      <p class="small">Ways to drive the env: an LLM over the tools, a scripted agent, or a VLA policy.
+      You mostly use <code>hud eval environment/tasks.py claude</code>.</p>
+    </div>
+    <div class="card">
+      <h3>The HUD workflow around it</h3>
+      <div class="path">declare → taskset → runtime → run → learn</div>
+      <p class="small">Run locally with <code>LocalRuntime</code>, scale on Modal, or
+      <code>hud deploy</code> to the platform. Every rollout is traced with its reward breakdown.</p>
+    </div>
+  </div>
+
+  <h2>2 · What formats a scene takes</h2>
+  <p>On <code>reset(scene_id)</code> the sim looks inside <code>scenes/&lt;scene_id&gt;/</code> for a scene file,
+  in this priority order (or a Python builder):</p>
+
+  <table>
+    <thead><tr><th>File</th><th>Format</th><th>Notes for us</th></tr></thead>
+    <tbody>
+      <tr><td><code>scene.xml</code> / <code>scene.mjcf</code></td><td>MuJoCo MJCF</td><td><strong>Use this.</strong> The bundled <code>tabletop-v1</code> is MJCF; full names/cameras/rendering supported. Easiest to hand-edit.</td></tr>
+      <tr><td><code>scene.usd</code> / <code>scene.usda</code></td><td>OpenUSD</td><td>Supported by Newton import; what Antim's <span class="pill">Gizmo</span> can export. Good for the pretty visual layer later.</td></tr>
+      <tr><td><code>scene.urdf</code></td><td>URDF</td><td>Robot description format. Imports geometry + joints, but no MuJoCo names/cameras layer.</td></tr>
+      <tr><td><code>build_scene.py</code></td><td>Python</td><td>A <code>build()</code> function returning a Newton model. Most flexible, most code.</td></tr>
+    </tbody>
+  </table>
+
+  <p class="muted small">Only <code>.xml</code>/<code>.mjcf</code> get the extra MuJoCo model loaded for human-readable
+  body/joint/camera names + rendering — which is exactly what the grading tools (<code>get_object_state</code>, etc.) read.
+  <strong>So for hand-authored work, stick to MJCF.</strong></p>
+
+  <h2>3 · How to add a new scene</h2>
+  <ol>
+    <li><span class="step-num">1.</span> Create a folder: <code>scenes/construction-v1/</code></li>
+    <li><span class="step-num">2.</span> Add <code>scene.xml</code> (MJCF): floor, a build platform, named blocks as free bodies, and your manipulator(s). Easiest start: copy <code>scenes/tabletop-v1/scene.xml</code> and swap the contents.</li>
+    <li><span class="step-num">3.</span> Add <code>metadata.json</code>: <code>scene_id</code>, <code>description</code>, the <code>objects</code> (with names + initial positions), and any gripper/actuator descriptions. This is what the agent prompt and your grader reference.</li>
+    <li><span class="step-num">4.</span> Reference it from a task: <code>await sim_tools.call("reset", scene_id="construction-v1")</code> inside an <code>@env.template</code>.</li>
+    <li><span class="step-num">5.</span> Smoke test: <code>python scripts/check_setup.py</code> then <code>hud eval environment/tasks.py claude --group 1</code>. Watch it with <code>WORLDSIM_VIEWER=1</code>.</li>
+  </ol>
+
+  <div class="callout good">
+    <span class="label">Minimum viable scene</span>
+    A floor <code>geom</code>, a fixed build pad, two free-body blocks (<code>base_block</code>, <code>roof_block</code>)
+    each with a <code>&lt;freejoint&gt;</code>, and one floating gripper (copy the gripper block verbatim from
+    <code>tabletop-v1</code>). That alone is enough for the Phase 1 <code>build-house</code> task.
+  </div>
+
+  <h2>4 · How to add a robot (and the humanoid question)</h2>
+  <p>A robot is just more bodies/joints/actuators in the MJCF. The Franka scene shows the clean pattern —
+  it pulls a whole robot model in with a single include:</p>
+  <pre><code>&lt;!-- scenes/franka-libero-v1/scene.xml --&gt;
+&lt;include file="franka_emika_panda/panda.xml"/&gt;   &lt;!-- merges the robot's bodies, assets, actuators --&gt;</code></pre>
+  <p>So to add an embodiment (a Unitree/Spot-style URDF, a humanoid MJCF, etc.):</p>
+  <ol>
+    <li><span class="step-num">1.</span> Drop the robot's model file + its mesh <code>assets/</code> into the scene folder (e.g. <code>scenes/construction-v1/unitree_h1/</code>).</li>
+    <li><span class="step-num">2.</span> <code>&lt;include&gt;</code> it from <code>scene.xml</code>, or paste its <code>&lt;body&gt;</code> tree into the worldbody. Give it a base <code>pos</code> so robots don't overlap.</li>
+    <li><span class="step-num">3.</span> Make sure every actuator has a unique name (prefix per robot, e.g. <code>h1_*</code>, <code>crane_*</code>).</li>
+  </ol>
+
+  <div class="callout warn">
+    <span class="label">Reality check — robot control is the hard part, not the geometry</span>
+    Importing a humanoid's <em>geometry</em> is easy. <strong>Making it act is not.</strong> The repo's only motion
+    controller (<code>sim/control.py</code>) is a Franka-specific IK that auto-activates only when it finds the exact
+    Franka joint names (<code>joint1..7</code>, <code>finger_joint1/2</code>, <code>actuator1..8</code>, <code>eef</code> site).
+    A dropped-in Unitree humanoid would be <em>inert articulated geometry</em> — there is <strong>no locomotion or
+    whole-body controller</strong>, and you'd be commanding raw joint torques via <code>step(action)</code>. Building a
+    stable legged-locomotion controller is days of work, not hours.
+  </div>
+
+  <div class="callout warn">
+    <span class="label">Reality check — the high-level gripper tools are single-robot</span>
+    <code>move_gripper</code>, <code>open_gripper</code>, <code>close_gripper</code>, <code>rotate_gripper</code> are
+    hardcoded to the tabletop gripper: body <code>gripper_base</code>, joints
+    <code>finger_left_slide</code>/<code>finger_right_slide</code>/<code>gripper_yaw</code>, and actuator indices
+    <code>ctrl[0..5]</code>. They control whichever actuators sit at those indices. <strong>Add a second robot and
+    these tools no longer mean what you think.</strong> For multi-robot you drive the full actuator vector with raw
+    <code>step(action)</code>, or you author per-robot tools.
+  </div>
+
+  <h2>5 · What that means for SiteForge (our scope)</h2>
+
+  <div class="callout stop">
+    <span class="label">Do NOT do in 10 hours</span>
+    <ul style="margin:6px 0 0;">
+      <li>Real Spot / Unitree humanoids with legged locomotion or whole-body control.</li>
+      <li>N independently-IK'd arms reusing the Franka VLA control path.</li>
+      <li>Trusting <code>move_gripper</code> &amp; friends with more than one manipulator in the scene.</li>
+    </ul>
+  </div>
+
+  <div class="callout good">
+    <span class="label">DO this instead</span>
+    <ul style="margin:6px 0 0;">
+      <li><strong>Phase 1:</strong> one MJCF scene <code>construction-v1</code> = floor + build pad + a few free-body
+      blocks + the proven floating gripper. Task <code>build-house</code>: stack <code>base_block</code> then
+      <code>roof_block</code> onto the pad. Reward = per-block closeness to the target house pose + a stability check
+      after settle. Reuses the exact <code>move-object</code> / <code>pick-object</code> mechanics → low risk.</li>
+      <li><strong>Phase 2 (fleet):</strong> model 3 embodiments as <em>floating manipulators with capability
+      profiles</em> (crane = heavy/slow, humanoid = dexterous, wheeled = fast/light). Theme via metadata + per-robot
+      capability limits enforced in a thin tool layer; drive via <code>step(action)</code> over the full actuator
+      vector. The narrative ("different embodiments, balance fleet use") holds without locomotion.</li>
+      <li><strong>Fleet fallback (if multi-gripper physics fights you, time-box 60 min):</strong> keep ONE physics arm,
+      make the fleet <em>symbolic</em> — a scheduler assigns blocks to named robots with capability constraints, physics
+      executes sequentially, and reward credits utilization + makespan as if parallel. Whole story preserved, zero
+      bridge rewrite.</li>
+    </ul>
+  </div>
+
+  <h3>The reward we're measuring (the "real task")</h3>
+  <pre><code>reward = 0.40 * structural_completion   # each block within tolerance of its target pose
+       + 0.20 * fleet_utilization        # work spread across robots, not one doing everything
+       + 0.15 * makespan_efficiency      # parallel build beats sequential
+       + 0.15 * safety_no_collision      # no two manipulators in one cell; nothing knocked over
+       + 0.10 * stability                # structure still standing after a settle step</code></pre>
+  <p class="muted small">Same partial-credit-from-sim-state pattern the template already uses for
+  <code>move-object</code>, just composed over multiple blocks and robots. That composability is why it's tractable.</p>
+
+  <hr />
+
+  <h2>Quick commands</h2>
+  <pre><code>uv sync                                   # deps incl. bundled Newton wheel
+hud set HUD_API_KEY=...                    # gateway + traces
+python scripts/check_setup.py             # boots sim + grades one scripted rollout
+hud eval environment/tasks.py claude --group 1      # LLM drives the tools
+WORLDSIM_VIEWER=1 hud eval environment/tasks.py claude --group 1   # watch live</code></pre>
+
+  <p class="muted small">Next: scaffold <code>scenes/construction-v1/</code> + the <code>build-house</code> task (Phase 1).</p>
+</div>
+</body>
+</html>

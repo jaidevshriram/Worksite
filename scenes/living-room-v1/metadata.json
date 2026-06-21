@@ -1,0 +1,196 @@
+{
+  "scene_id": "living-room-v1",
+  "description": "Gizmo-exported furnished living room: enclosing walls with a south window, a floor, a sofa with three loose cushions, a movable wooden nightstand/cabinet with a pull-out drawer, a retro TV with two adjustable dials, a rug, and assorted props. Mesh-based MJCF loaded via Newton's importer. The scene <include>s a Unitree G1 humanoid (expected at unitree_g1/g1.xml relative to this scene) at the spawn site; that robot model is NOT bundled in this export and must be supplied for the scene to compile.",
+  "source": "gizmo-export",
+  "format": "mjcf",
+  "engine": "newton",
+  "robot": {
+    "model": "unitree_g1",
+    "include": "unitree_g1/g1.xml",
+    "spawn_site": "spawn_Robot_Spawn",
+    "spawn_position": [0.0, 1.026368, 0.585013],
+    "description": "Unitree G1 humanoid pulled in via <include file='unitree_g1/g1.xml'>. The referenced file (MuJoCo Menagerie) is missing from this export; place the unitree_g1 model folder next to scene.xml so the include resolves. Note: this template has no locomotion controller for the G1, so without added control it loads as inert geometry."
+  },
+  "objects": {
+    "floor_box_0": {
+      "type": "fixture",
+      "description": "Room floor slab",
+      "initial_position": [0.0, 0.0, 0.1]
+    },
+    "north_wall_box_1": {
+      "type": "fixture",
+      "description": "North wall",
+      "initial_position": [-0.030189, 2.5, 1.7]
+    },
+    "south_wall_box_2": {
+      "type": "fixture",
+      "description": "South wall (contains the window)",
+      "initial_position": [0.0, -2.5, 1.7]
+    },
+    "south_wall_window_frame_5": {
+      "type": "fixture",
+      "description": "Window frame set into the south wall",
+      "initial_position": [0.0, -2.5, 1.490457]
+    },
+    "south_win_glass_box_15": {
+      "type": "fixture",
+      "description": "Glass pane of the south window",
+      "initial_position": [0.0, -2.5, 1.516102]
+    },
+    "east_wall_box_6": {
+      "type": "fixture",
+      "description": "East wall (with arched frame opening)",
+      "initial_position": [2.5, 0.0, 1.7]
+    },
+    "west_wall_box_12": {
+      "type": "fixture",
+      "description": "West wall",
+      "initial_position": [-2.5, 0.0, 1.7]
+    },
+    "asset_0_0": {
+      "type": "fixture",
+      "description": "Sofa/couch frame (static base for the loose cushions)",
+      "initial_position": [0.0, 1.91, 0.2]
+    },
+    "asset_0_0_fb_cushion_left": {
+      "type": "free",
+      "description": "Left sofa cushion (movable)",
+      "initial_position": [0.0, 1.91, 0.2],
+      "joint": "freejoint"
+    },
+    "asset_0_0_fb_cushion_mid": {
+      "type": "free",
+      "description": "Middle sofa cushion (movable)",
+      "initial_position": [0.0, 1.91, 0.2],
+      "joint": "freejoint"
+    },
+    "asset_0_0_fb_cushion_right": {
+      "type": "free",
+      "description": "Right sofa cushion (movable)",
+      "initial_position": [0.0, 1.91, 0.2],
+      "joint": "freejoint"
+    },
+    "simple_wooden_purple_tv_1_articulation_interactable": {
+      "type": "free",
+      "description": "Movable wooden nightstand/cabinet whose body can be repositioned and which contains a pull-out drawer",
+      "initial_position": [-1.547941, 2.03208, 0.2],
+      "joint": "freejoint"
+    },
+    "simple_wooden_purple_tv_grp_drawer_46": {
+      "type": "articulated",
+      "description": "Pull-out drawer in the wooden nightstand/cabinet",
+      "joint": "j_joint_drawer_prismatic_47",
+      "joint_type": "slide",
+      "range": [-0.3, 0.0],
+      "closed_position": 0.0,
+      "open_position": -0.3
+    },
+    "asset_2_2": {
+      "type": "free",
+      "description": "Round wooden side table next to the sofa. Made movable for pick-and-place tasks (freejoint + 3 kg inertial added on top of the original Gizmo static geometry).",
+      "initial_position": [1.51804, 1.955, 0.218],
+      "joint": "asset_2_2_joint"
+    },
+    "asset_3_3": {
+      "type": "fixture",
+      "description": "Wall-mounted decor near the top of the north wall",
+      "initial_position": [0.0, 2.41, 1.65]
+    },
+    "braided_oval_rug_4_rigid_body": {
+      "type": "fixture",
+      "description": "Braided oval rug lying on the floor (rigid_body class, static)",
+      "initial_position": [0.049637, 1.25, 0.2]
+    },
+    "asset_5_5": {
+      "type": "free",
+      "description": "Movable decor object (~3.93 kg) resting on the cabinet",
+      "initial_position": [-1.554715, 2.003212, 0.85],
+      "joint": "freejoint"
+    },
+    "asset_6_6": {
+      "type": "free",
+      "description": "Movable retro TV/console with two adjustable dials",
+      "initial_position": [0.067289, -1.91845, 0.2],
+      "joint": "freejoint"
+    },
+    "asset_6_grp_dial_top_125": {
+      "type": "articulated",
+      "description": "Top rotary dial on the retro TV",
+      "joint": "j_joint_dial_top_126",
+      "joint_type": "hinge"
+    },
+    "asset_6_grp_dial_bot_129": {
+      "type": "articulated",
+      "description": "Bottom rotary dial on the retro TV",
+      "joint": "j_joint_dial_bottom_130",
+      "joint_type": "hinge"
+    }
+  },
+  "sites": {
+    "spawn_Robot_Spawn": {
+      "description": "Marked robot spawn location (cylinder marker); no robot is instantiated in this scene",
+      "position": [0.0, 1.026368, 0.585013]
+    }
+  },
+  "cameras": [],
+  "sensors": {
+    "drawer": {
+      "jointpos": "pos_j_joint_drawer_prismatic_47",
+      "jointvel": "vel_j_joint_drawer_prismatic_47",
+      "jointactuatorfrc": "frc_j_joint_drawer_prismatic_47",
+      "description": "State of the nightstand drawer slide joint 'j_joint_drawer_prismatic_47'"
+    },
+    "dial_top": {
+      "jointpos": "pos_j_joint_dial_top_126",
+      "jointvel": "vel_j_joint_dial_top_126",
+      "jointactuatorfrc": "frc_j_joint_dial_top_126",
+      "description": "State of the TV's top dial hinge joint 'j_joint_dial_top_126'"
+    },
+    "dial_bottom": {
+      "jointpos": "pos_j_joint_dial_bottom_130",
+      "jointvel": "vel_j_joint_dial_bottom_130",
+      "jointactuatorfrc": "frc_j_joint_dial_bottom_130",
+      "description": "State of the TV's bottom dial hinge joint 'j_joint_dial_bottom_130'"
+    },
+    "body_frames": {
+      "description": "Per-body pose/velocity frame sensors for the movable objects",
+      "simple_wooden_purple_tv_1_articulation_interactable": ["pos_simple_wooden_purple_tv_1_articulation_interactable", "quat_simple_wooden_purple_tv_1_articulation_interactable", "lvel_simple_wooden_purple_tv_1_articulation_interactable", "avel_simple_wooden_purple_tv_1_articulation_interactable"],
+      "asset_5_5": ["pos_asset_5_5", "quat_asset_5_5", "lvel_asset_5_5", "avel_asset_5_5"],
+      "asset_6_6": ["pos_asset_6_6", "quat_asset_6_6", "lvel_asset_6_6", "avel_asset_6_6"]
+    },
+    "energy": ["e_pot", "e_kin"],
+    "clock": "time",
+    "usage": "Use get_object_state(object_name=...) and get_joint_state(joint_name=...) to read these; sensor names above mirror the <sensor> block in scene.xml."
+  },
+  "keyframes": ["simstudio_home", "simstudio_reset"],
+  "tasks": {
+    "open_drawer": {
+      "target_joint": "j_joint_drawer_prismatic_47",
+      "joint_type": "slide",
+      "range": [-0.3, 0.0],
+      "success_threshold": -0.2,
+      "description": "Pull the nightstand drawer open (slide toward -0.3 m)"
+    },
+    "turn_dial_top": {
+      "target_joint": "j_joint_dial_top_126",
+      "joint_type": "hinge",
+      "description": "Rotate the TV's top dial"
+    },
+    "turn_dial_bottom": {
+      "target_joint": "j_joint_dial_bottom_130",
+      "joint_type": "hinge",
+      "description": "Rotate the TV's bottom dial"
+    },
+    "arrange_cushions": {
+      "target_objects": ["asset_0_0_fb_cushion_left", "asset_0_0_fb_cushion_mid", "asset_0_0_fb_cushion_right"],
+      "description": "Reposition the three loose sofa cushions"
+    },
+    "move_side_table_to_corner": {
+      "target_object": "asset_2_2",
+      "target_joint": "asset_2_2_joint",
+      "start_position": [1.51804, 1.955, 0.218],
+      "goal_region": {"corner": "SW", "center": [-2.0, -2.0], "radius": 0.6},
+      "description": "Pick up the round side table and move it into the south-west corner of the room (within 0.6 m of [-2.0, -2.0]). Demonstrated kinematically by scripts/loco_manip_g1.py."
+    }
+  }
+}

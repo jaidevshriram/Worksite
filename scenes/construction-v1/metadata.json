@@ -1,0 +1,135 @@
+{
+  "scene_id": "construction-v1",
+  "description": "Outdoor construction site. Large open area (~28×19 m) with grass/sand terrain on a raised concrete foundation. Contains scaffolding along the north edge, four pallets of bricks in the south-east, two cement mixers near the centre, a yellow excavator on the west side, two heavy-duty blue trucks on the east side, and two portable restrooms on the far west. Six Boston Dynamics Spot spawn points are marked in the scene.",
+  "floor_z": 0.562,
+  "robot_base_height": {
+    "spot": 1.022,
+    "note": "Spot trunk height for standing pose on the foundation slab (floor_z + Spot standing height 0.46)"
+  },
+  "spawn_points": [
+    {"name": "spawn_spot_0", "pos": [-1.376,  2.249, 1.022]},
+    {"name": "spawn_spot_1", "pos": [ 2.810,  2.102, 1.022]},
+    {"name": "spawn_spot_2", "pos": [-1.667, -2.276, 1.022]},
+    {"name": "spawn_spot_3", "pos": [ 2.658, -2.473, 1.022]},
+    {"name": "spawn_spot_4", "pos": [-12.854, 4.345, 1.022]},
+    {"name": "spawn_spot_5", "pos": [-13.399, 6.271, 1.022]}
+  ],
+  "objects": {
+    "terrain_grass_0": {
+      "type": "static",
+      "description": "Grassy terrain, large flat panel"
+    },
+    "terrain_sand_1": {
+      "type": "static",
+      "description": "Sandy terrain section"
+    },
+    "foundation_slab_box_2": {
+      "type": "static",
+      "description": "Concrete floor slab for the main work area"
+    },
+    "foundation_3": {
+      "type": "static",
+      "description": "Main raised concrete foundation platform"
+    },
+    "industrial_modular_metal_scaffolding_0_rigid_body": {
+      "type": "static",
+      "description": "Metal scaffolding section (west end), pos [-9, 9.2]",
+      "initial_position": [-9.0, 9.209, 0.0]
+    },
+    "industrial_modular_metal_scaffolding_1_rigid_body": {
+      "type": "static",
+      "description": "Metal scaffolding section 2",
+      "initial_position": [-4.5, 9.209, 0.0]
+    },
+    "industrial_modular_metal_scaffolding_2_rigid_body": {
+      "type": "static",
+      "description": "Metal scaffolding section (centre)",
+      "initial_position": [0.0, 9.209, 0.0]
+    },
+    "industrial_modular_metal_scaffolding_3_rigid_body": {
+      "type": "static",
+      "description": "Metal scaffolding section 4",
+      "initial_position": [4.5, 9.209, 0.0]
+    },
+    "industrial_modular_metal_scaffolding_4_rigid_body": {
+      "type": "static",
+      "description": "Metal scaffolding section 5",
+      "initial_position": [9.0, 9.209, 0.0]
+    },
+    "industrial_modular_metal_scaffolding_5_rigid_body": {
+      "type": "static",
+      "description": "Metal scaffolding section (east end)",
+      "initial_position": [13.5, 9.209, 0.0]
+    },
+    "pallet_of_bricks_6_rigid_body": {
+      "type": "static",
+      "description": "Pallet of bricks (NW of brick cluster)",
+      "initial_position": [10.0, -4.72, 0.992]
+    },
+    "pallet_of_bricks_7_rigid_body": {
+      "type": "static",
+      "description": "Pallet of bricks (west of brick cluster)",
+      "initial_position": [8.498, -5.0, 0.992]
+    },
+    "pallet_of_bricks_8_rigid_body": {
+      "type": "static",
+      "description": "Pallet of bricks (SW of brick cluster)",
+      "initial_position": [9.911, -6.5, 0.992]
+    },
+    "pallet_of_bricks_9_rigid_body": {
+      "type": "static",
+      "description": "Pallet of bricks (east of brick cluster)",
+      "initial_position": [11.438, -5.0, 0.992]
+    },
+    "yellow_compact_track_excavator_10_rigid_body": {
+      "type": "static",
+      "description": "Yellow excavator on the west side of the site",
+      "initial_position": [-10.0, -0.12, 1.245]
+    },
+    "large_heavy_duty_blue_11_rigid_body": {
+      "type": "static",
+      "description": "Heavy-duty blue truck (north)",
+      "initial_position": [11.395, 6.0, 1.192]
+    },
+    "large_heavy_duty_blue_12_rigid_body": {
+      "type": "static",
+      "description": "Heavy-duty blue truck (south)",
+      "initial_position": [11.395, 0.0, 1.192]
+    },
+    "portable_restroom_13_articulation_interactable": {
+      "type": "static",
+      "description": "Portable restroom (west side)",
+      "initial_position": [-14.025, -6.0, 1.192]
+    },
+    "portable_restroom_14_articulation_interactable": {
+      "type": "static",
+      "description": "Portable restroom (west side, south)",
+      "initial_position": [-14.025, -7.93, 1.192]
+    },
+    "portable_cement_mixer_15_articulation_interactable": {
+      "type": "static",
+      "description": "Cement mixer near centre-north",
+      "initial_position": [3.5, 6.831, 1.192]
+    },
+    "portable_cement_mixer_16_articulation_interactable": {
+      "type": "static",
+      "description": "Second cement mixer",
+      "initial_position": [1.0, 4.992, 1.192]
+    }
+  },
+  "tasks": {
+    "move_bricks_to_scaffold": {
+      "description": "Two Spot robots cooperate to carry a pallet of bricks from the brick cluster (SE) to the base of the scaffolding (north edge). Requires coordination since pallets are heavy.",
+      "target_object": "pallet_of_bricks_6_rigid_body",
+      "goal_region": {"center": [0.0, 7.0], "radius": 2.0}
+    },
+    "site_patrol": {
+      "description": "Spot robots each visit a set of waypoints (excavator, trucks, restrooms) and confirm the site is clear before a safety check.",
+      "waypoints": [
+        [-10.0, -0.12],
+        [11.395, 3.0],
+        [-14.025, -7.0]
+      ]
+    }
+  }
+}
