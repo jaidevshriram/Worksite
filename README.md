@@ -4,7 +4,7 @@
 
 Worksite is a simulation-to-training platform for benchmarking how AI coordinates fleets of robots on a construction site — from HUD eval rollouts and scripted reference agents to optional Fireworks GRPO training and a static demo site.
 
-**Powered by:** HUD · Fireworks · Exa · World Labs · MuJoCo
+**Powered by:** HUD · Fireworks · Exa · MuJoCo
 
 ## Quick start
 
